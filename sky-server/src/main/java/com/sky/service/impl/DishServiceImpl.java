@@ -69,4 +69,34 @@ public class DishServiceImpl implements DishService {
         }
         return Result.error("有套餐未删除或者状态非0");
     }
+
+    @Override
+    public void changeStatus(Integer status, Integer id) {
+        dishMapper.changeStatus(status,id);
+    }
+
+    @Override
+    @Transactional
+    public DishVO getById(Integer id) {
+        DishVO dishVO = dishMapper.getById(id);
+        List<DishFlavor> dishFlavors = dishFlavorMapper.getByDishId(id);
+        dishVO.setFlavors(dishFlavors);
+        return dishVO;
+    }
+
+    @Override
+    public void transDish(DishDTO dishDTO) {
+        Dish dish = new Dish();
+        BeanUtils.copyProperties(dishDTO,dish);
+        dishMapper.update(dish);
+
+        Long id = dish.getId();
+        List<DishFlavor> flavors = dishDTO.getFlavors();
+        if(flavors!=null && flavors.size()>0){
+            flavors.forEach(dishFlavor -> dishFlavor.setDishId(id));
+            //进行存储
+            dishFlavorMapper.updateBatch(flavors);
+        }
+    }
+
 }
