@@ -9,6 +9,7 @@ import com.sky.entity.DishFlavor;
 import com.sky.mapper.DishFlavorMapper;
 import com.sky.mapper.DishMapper;
 import com.sky.result.PageResult;
+import com.sky.result.Result;
 import com.sky.service.DishService;
 import com.sky.vo.DishVO;
 import lombok.extern.slf4j.Slf4j;
@@ -52,5 +53,20 @@ public class DishServiceImpl implements DishService {
         Page<DishVO> dishVOS  = dishMapper.pageQuery(dishPageQueryDTO);
         return new PageResult(dishVOS.getTotal(),dishVOS.getResult());
 
+    }
+
+    @Transactional
+    @Override
+    public Result deleteDish(List<Long> ids) {
+        if(ids.size()==0 ||ids==null){
+            return Result.error("未传输要删除的数据");
+            //这种情况几乎不会发生
+        }
+        Long count = dishMapper.deleteDish(ids);
+        if(count>0){
+            dishFlavorMapper.deleteFlavor(ids);
+            return Result.success();
+        }
+        return Result.error("有套餐未删除或者状态非0");
     }
 }
