@@ -22,4 +22,6 @@ public interface DishService {
     DishVO getById(Integer id);
 
     void transDish(DishDTO dishDTO);
+
+    List<DishVO> getDishById(String id);
 }

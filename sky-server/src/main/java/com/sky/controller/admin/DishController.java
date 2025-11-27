@@ -11,8 +11,10 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -21,6 +23,8 @@ import java.util.List;
 @RequestMapping("/admin/dish")
 public class DishController {
 
+    @Autowired
+    StringRedisTemplate stringRedisTemplate;
     @Autowired
     private DishService dishService;
     @PostMapping
@@ -36,7 +40,9 @@ public class DishController {
     public Result<PageResult> pageQuery(DishPageQueryDTO dishPageQueryDTO){
         log.info("进行分页查询：{}",dishPageQueryDTO);
         PageResult pageResult =  dishService.pageQuery(dishPageQueryDTO);
+
         return Result.success(pageResult);
+
     }
     @DeleteMapping
     @ApiOperation("批量或者删除单个菜品")
@@ -62,5 +68,13 @@ public class DishController {
     public Result transDish(@RequestBody DishDTO dishDTO){
         dishService.transDish(dishDTO);
         return Result.success();
+    }
+
+    @GetMapping("/list")
+    @ApiOperation("根据分类的id查询菜品")
+    public Result<List<DishVO>> getDishById(String categoryId){
+        log.info("进行菜品的查询{}",categoryId);
+        List<DishVO> dishVOS = dishService.getDishById(categoryId);
+        return Result.success(dishVOS);
     }
 }

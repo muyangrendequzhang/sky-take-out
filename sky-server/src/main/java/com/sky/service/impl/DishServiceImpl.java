@@ -99,4 +99,12 @@ public class DishServiceImpl implements DishService {
         }
     }
 
+    @Override
+    public List<DishVO> getDishById(String id) {
+        Long l = Long.valueOf(id);
+        List<DishVO> dish =  dishMapper.getDishById(l);
+        return dish;
+
+    }
+
 }
